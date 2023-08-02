@@ -7,10 +7,8 @@ SC_MODULE(FIFO) {
         SC_CTOR(FIFO) : f1(2), f2(2), f3(2) { // fifo with size 2
             SC_THREAD(generator1);
             SC_THREAD(consumer1);
-
             SC_THREAD(generator2);
             SC_THREAD(consumer2);
-
             SC_THREAD(generator3);
             SC_THREAD(consumer3);
         }
