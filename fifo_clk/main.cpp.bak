@@ -1,0 +1,66 @@
+#include "systemc.h"
+#include "fifo_clk.h"
+using namespace std;
+
+SC_MODULE(fifo_clk_top)
+{
+    sc_in_clk clock;
+
+    sc_signal<unsigned> vin, vout;
+    fifo_clk<unsigned> fifo1;
+
+    SC_CTOR(fifo_clk_top): clock("clock0"), vin("vin"), vout("vout"), fifo1("fifo1",4)
+    {
+        fifo1.clock(clock);
+        SC_THREAD(wr_fifo);
+        SC_THREAD(rd_fifo);
+    }
+
+    void wr_fifo(void)
+    {
+        unsigned delay_num = rand()%2+1;
+        unsigned data = rand();
+        vin.write(data);
+        cout<<"time: "<<sc_time_stamp().to_seconds()*1000000000.0<<"ns"<<"; first wr delay: "<<--delay_num<<"; first wr data: "<<data<<endl;
+        while(true) {
+            wait(clock->posedge_event());
+            if (delay_num-- != 0)
+                continue;
+            cout<<"time: "<<sc_time_stamp().to_seconds()*1000000000.0<<"ns"<<"; write begin data: "<<vin.read()<<endl;
+            fifo1.write(vin.read());
+            cout<<"time: "<<sc_time_stamp().to_seconds()*100000000.0<<"ns"<<"; write done data: "<<vin.read()<<endl;
+            delay_num = rand()%2+1;
+            data = rand();
+            cout<<"  new wr delay: "<<delay_num--<<"; new wr data: "<<data<<endl;
+            vin.write(data);
+        }
+    }
+
+    void rd_fifo(void)
+    {
+        unsigned delay_num = rand()%4+1;
+        unsigned data = 0;
+        vout.write(0);
+        cout<<"time: "<<sc_time_stamp().to_seconds()*1000000000.0<<"ns"<<"; first rd delay: "<<--delay_num<<endl;
+        while(true) {
+            wait(clock->posedge_event());
+            if (delay_num-- != 0)
+                continue;
+            cout<<"time: "<<sc_time_stamp().to_seconds()*1000000000.0<<"ns"<<"; read begin data"<<endl;
+            data = fifo1.read();
+            cout<<"time: "<<sc_time_stamp().to_seconds()*1000000000.0<<"ns"<<"; read done data: "<<data<<endl;
+            vout.write(data);
+            delay_num = rand()%4+1;
+            cout<<"  new rd delay: "<<delay_num--<<endl;
+        }
+    }
+};
+
+int sc_main(int,char**)
+{
+    sc_clock clock("clock",20,SC_NS);
+    fifo_clk_top top("top");
+    top.clock(clock);
+    sc_start(2000,SC_NS);
+    return 0;
+}

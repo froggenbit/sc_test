@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/fangtianqi/sc_test/sc_test/fifo_clk/cmake-build-debug",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -I/opt/homebrew/Cellar/systemc/2.3.4/include -g -std=gnu++11 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics -o CMakeFiles/out.dir/main.cpp.o -c /Users/fangtianqi/sc_test/sc_test/fifo_clk/main.cpp",
+  "file": "/Users/fangtianqi/sc_test/sc_test/fifo_clk/main.cpp",
+  "output": "CMakeFiles/out.dir/main.cpp.o"
+}
+]
